@@ -1,0 +1,20 @@
+# Ignore model artifacts and caches
+artifacts/
+*.joblib
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment
+.env
+
+# VSCode
+.vscode/
+
+# OS
+Thumbs.db
+desktop.ini

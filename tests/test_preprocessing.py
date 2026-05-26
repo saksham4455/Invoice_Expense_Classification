@@ -1,4 +1,4 @@
-from utils import preprocess_text
+from app import preprocess_text
 
 
 def test_preprocess_lower_and_strip_punctuation():

@@ -3,7 +3,20 @@ import re
 import joblib
 from fastapi import FastAPI
 from pydantic import BaseModel
-from utils import preprocess_text
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
+# Ensure NLTK resources
+nltk_packages = ["stopwords", "wordnet", "omw-1.4"]
+for pkg in nltk_packages:
+    try:
+        nltk.data.find(f"corpora/{pkg}")
+    except LookupError:
+        nltk.download(pkg, quiet=True)
+
+lemmatizer = WordNetLemmatizer()
+stop_words = set(stopwords.words("english"))
 
 repo_root = Path(__file__).parent
 artifacts = repo_root / "artifacts"
@@ -17,6 +30,16 @@ app = FastAPI(title="Invoice Expense Classifier", version="1.0.0")
 
 class PredictRequest(BaseModel):
     text: str
+
+def preprocess_text(text: str) -> str:
+    text = str(text).lower()
+    text = re.sub(r"[^\w\s]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    tokens = []
+    for token in text.split():
+        if token not in stop_words:
+            tokens.append(lemmatizer.lemmatize(token))
+    return " ".join(tokens)
 
 
 @app.post("/predict")
